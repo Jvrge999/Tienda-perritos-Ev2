@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: mysql:8
@@ -12,7 +11,7 @@ services:
       - tienda-network
 
   backend-despachos:
-    build: ./back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
+    image: jucwd999/tienda-backend-despachos:latest
     container_name: back-despachos
     ports:
       - "3001:3001"
@@ -27,7 +26,7 @@ services:
       - tienda-network
 
   backend-ventas:
-    build: ./back-Ventas_SpringBoot/Springboot-API-REST
+    image: jucwd999/tienda-backend-ventas:latest
     container_name: back-ventas
     ports:
       - "3002:3002"
@@ -42,7 +41,7 @@ services:
       - tienda-network
 
   frontend:
-    build: ./front_despacho
+    image: jucwd999/tienda-frontend:latest
     container_name: front-tienda
     ports:
       - "80:80"
