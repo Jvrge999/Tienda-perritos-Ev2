@@ -1,12 +1,14 @@
+# Etapa 1: Construcción (Build)
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Etapa 2: Producción (Servidor Nginx)
 FROM nginx:alpine
-
-# Limpia contenido por defecto
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copia los archivos del frontend
-COPY index.html app.js /usr/share/nginx/html/
-
-# Copia la configuración custom de Nginx
-COPY default.conf /etc/nginx/conf.d/default.conf
-
+COPY --from=build /app/dist /usr/share/nginx/html
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
