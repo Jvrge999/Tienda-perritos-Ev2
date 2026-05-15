@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Base de Datos (Persistencia de datos - IE4)
+  db:
+    image: mysql:8
+    container_name: tienda-db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: tienda_perritos
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - tienda-network
+
+  # Backend Despachos (Puerto 3001)
+  backend-despachos:
+    build: ./backend-despachos
+    container_name: back-despachos
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=admin123
+      - DB_NAME=tienda_perritos
+    depends_on:
+      - db
+    networks:
+      - tienda-network
+
+  # Backend Ventas (Puerto 3002)
+  backend-ventas:
+    build: ./backend-ventas
+    container_name: back-ventas
+    ports:
+      - "3002:3002"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=admin123
+      - DB_NAME=tienda_perritos
+    depends_on:
+      - db
+    networks:
+      - tienda-network
+
+  # Frontend (Puerto 80 - IE5)
+  frontend:
+    build: ./frontend-despacho
+    container_name: front-tienda
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-despachos
+      - backend-ventas
+    networks:
+      - tienda-network
+
+networks:
+  tienda-network:
+    driver: bridge
+
+volumes:
+  db_data:
